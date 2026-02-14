@@ -1,0 +1,31 @@
+# Example: Add this workflow to any repository to scan dependencies on every PR
+#
+# Prerequisites:
+#   1. Add VECTRIX_TOKEN as a repository secret (Settings → Secrets → Actions)
+#   2. Add VECTRIX_PROJECT_ID as a repository secret
+#
+name: Vectrix Dependency Scan
+
+on:
+  pull_request:
+    paths:
+      - "package-lock.json"
+      - "package.json"
+      - "requirements.txt"
+      - "go.sum"
+  push:
+    branches: [main]
+
+jobs:
+  scan:
+    name: Scan dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vectrix scan
+        uses: your-org/vectrix@main
+        with:
+          token: ${{ secrets.VECTRIX_TOKEN }}
+          project-id: ${{ secrets.VECTRIX_PROJECT_ID }}
+          fail-on-critical: "true"

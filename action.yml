@@ -1,0 +1,139 @@
+name: "Vectrix Dependency Scan"
+description: "Scan your dependencies for supply chain risks, vulnerabilities, and maintenance issues"
+author: "Vectrix"
+
+branding:
+  icon: "shield"
+  color: "purple"
+
+inputs:
+  token:
+    description: "Your Vectrix API token"
+    required: true
+  project-id:
+    description: "Vectrix project ID to associate the scan with"
+    required: true
+  file:
+    description: "Path to lockfile (auto-detected if not set)"
+    required: false
+  fail-on-critical:
+    description: "Fail the workflow if critical findings are detected"
+    required: false
+    default: "true"
+  api-url:
+    description: "Custom API endpoint (for self-hosted instances)"
+    required: false
+    default: "https://vectrix.vercel.app/api"
+
+outputs:
+  total-deps:
+    description: "Total number of dependencies scanned"
+  critical-count:
+    description: "Number of critical findings"
+  warning-count:
+    description: "Number of warning findings"
+  scan-id:
+    description: "ID of the scan for linking to the dashboard"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Detect lockfile
+      id: detect
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.file }}" ]; then
+          echo "lockfile=${{ inputs.file }}" >> "$GITHUB_OUTPUT"
+          echo "filename=$(basename ${{ inputs.file }})" >> "$GITHUB_OUTPUT"
+        elif [ -f "package-lock.json" ]; then
+          echo "lockfile=package-lock.json" >> "$GITHUB_OUTPUT"
+          echo "filename=package-lock.json" >> "$GITHUB_OUTPUT"
+        elif [ -f "package.json" ]; then
+          echo "lockfile=package.json" >> "$GITHUB_OUTPUT"
+          echo "filename=package.json" >> "$GITHUB_OUTPUT"
+        elif [ -f "requirements.txt" ]; then
+          echo "lockfile=requirements.txt" >> "$GITHUB_OUTPUT"
+          echo "filename=requirements.txt" >> "$GITHUB_OUTPUT"
+        elif [ -f "go.sum" ]; then
+          echo "lockfile=go.sum" >> "$GITHUB_OUTPUT"
+          echo "filename=go.sum" >> "$GITHUB_OUTPUT"
+        else
+          echo "::error::No supported lockfile found. Supported: package-lock.json, package.json, requirements.txt, go.sum"
+          exit 1
+        fi
+
+    - name: Run Vectrix scan
+      id: scan
+      shell: bash
+      env:
+        VECTRIX_TOKEN: ${{ inputs.token }}
+        VECTRIX_API: ${{ inputs.api-url }}
+      run: |
+        LOCKFILE="${{ steps.detect.outputs.lockfile }}"
+        FILENAME="${{ steps.detect.outputs.filename }}"
+
+        echo "::group::Scanning $FILENAME"
+
+        CONTENT=$(cat "$LOCKFILE")
+
+        RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$VECTRIX_API/scan" \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $VECTRIX_TOKEN" \
+          -d "$(jq -n \
+            --arg pid "${{ inputs.project-id }}" \
+            --arg fn "$FILENAME" \
+            --arg content "$CONTENT" \
+            '{project_id: $pid, filename: $fn, content: $content}')")
+
+        HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+        BODY=$(echo "$RESPONSE" | sed '$d')
+
+        if [ "$HTTP_CODE" -ne 200 ]; then
+          echo "::error::Scan failed (HTTP $HTTP_CODE): $(echo "$BODY" | jq -r '.error // "Unknown error"')"
+          exit 1
+        fi
+
+        TOTAL=$(echo "$BODY" | jq -r '.total_deps')
+        CRITICAL=$(echo "$BODY" | jq -r '.critical')
+        WARNINGS=$(echo "$BODY" | jq -r '.warnings')
+        CLEAN=$(echo "$BODY" | jq -r '.clean')
+        SCAN_ID=$(echo "$BODY" | jq -r '.scan_id')
+
+        echo "total-deps=$TOTAL" >> "$GITHUB_OUTPUT"
+        echo "critical-count=$CRITICAL" >> "$GITHUB_OUTPUT"
+        echo "warning-count=$WARNINGS" >> "$GITHUB_OUTPUT"
+        echo "scan-id=$SCAN_ID" >> "$GITHUB_OUTPUT"
+
+        echo ""
+        echo "┌─────────────────────────────────────────┐"
+        echo "│ $CRITICAL critical   $WARNINGS warning   $CLEAN ok │"
+        echo "└─────────────────────────────────────────┘"
+        echo ""
+
+        # Print findings
+        echo "$BODY" | jq -r '.findings[] | "\(.severity | ascii_upcase)  \(.package_name)@\(.package_version)\n  → \(.title)\n  → \(.recommendation)\n"'
+
+        echo "::endgroup::"
+
+        # Write job summary
+        echo "## Vectrix Scan Results" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+        echo "| Metric | Count |" >> "$GITHUB_STEP_SUMMARY"
+        echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+        echo "| Total dependencies | $TOTAL |" >> "$GITHUB_STEP_SUMMARY"
+        echo "| Critical | $CRITICAL |" >> "$GITHUB_STEP_SUMMARY"
+        echo "| Warnings | $WARNINGS |" >> "$GITHUB_STEP_SUMMARY"
+        echo "| Clean | $CLEAN |" >> "$GITHUB_STEP_SUMMARY"
+        echo "" >> "$GITHUB_STEP_SUMMARY"
+
+        if [ "$CRITICAL" -gt 0 ]; then
+          echo "### Critical Findings" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "$BODY" | jq -r '.findings[] | select(.severity == "critical") | "- **\(.package_name)@\(.package_version)**: \(.title)"' >> "$GITHUB_STEP_SUMMARY"
+        fi
+
+        # Fail if critical findings and fail-on-critical is true
+        if [ "${{ inputs.fail-on-critical }}" = "true" ] && [ "$CRITICAL" -gt 0 ]; then
+          echo "::error::$CRITICAL critical finding(s) detected. See scan results above."
+          exit 1
+        fi
