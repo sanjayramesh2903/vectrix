@@ -8,7 +8,6 @@ import {
   Package,
   GitBranch,
   Clock,
-  ExternalLink,
   ChevronDown,
   ChevronRight,
   Search,
@@ -35,24 +34,24 @@ import {
 const severityConfig = {
   critical: {
     icon: AlertCircle,
-    bg: "bg-red-500/10",
-    text: "text-red-400",
-    border: "border-red-500/20",
-    badge: "bg-red-500/20 text-red-300",
+    bg: "bg-danger-wash",
+    text: "text-danger",
+    border: "border-danger/20",
+    badge: "bg-danger-wash text-danger border border-danger/15",
   },
   warning: {
     icon: AlertTriangle,
-    bg: "bg-amber-500/10",
-    text: "text-amber-400",
-    border: "border-amber-500/20",
-    badge: "bg-amber-500/20 text-amber-300",
+    bg: "bg-warning-wash",
+    text: "text-warning",
+    border: "border-warning/20",
+    badge: "bg-warning-wash text-warning border border-warning/15",
   },
   info: {
     icon: CheckCircle2,
-    bg: "bg-blue-500/10",
-    text: "text-blue-400",
-    border: "border-blue-500/20",
-    badge: "bg-blue-500/20 text-blue-300",
+    bg: "bg-cyan-wash",
+    text: "text-cyan-glow",
+    border: "border-cyan-glow/20",
+    badge: "bg-cyan-wash text-cyan-glow border border-cyan-glow/15",
   },
 };
 
@@ -72,7 +71,7 @@ function FindingRow({ finding }: { finding: Finding }) {
         <Icon className={`h-4 w-4 shrink-0 ${cfg.text}`} />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-medium text-white">
+            <span className="text-sm font-medium text-text-primary">
               {finding.package_name}@{finding.package_version}
             </span>
             <span
@@ -81,28 +80,28 @@ function FindingRow({ finding }: { finding: Finding }) {
               {finding.severity}
             </span>
             {finding.cve && (
-              <span className="text-xs text-slate-500">{finding.cve}</span>
+              <span className="text-xs text-text-muted">{finding.cve}</span>
             )}
           </div>
-          <p className="mt-0.5 truncate text-sm text-slate-400">
+          <p className="mt-0.5 truncate text-sm text-text-secondary">
             {finding.title}
           </p>
         </div>
         {expanded ? (
-          <ChevronDown className="h-4 w-4 shrink-0 text-slate-500" />
+          <ChevronDown className="h-4 w-4 shrink-0 text-text-muted" />
         ) : (
-          <ChevronRight className="h-4 w-4 shrink-0 text-slate-500" />
+          <ChevronRight className="h-4 w-4 shrink-0 text-text-muted" />
         )}
       </button>
 
       {expanded && (
         <div className="border-t border-white/5 px-4 py-3 text-sm">
-          <p className="text-slate-300">{finding.description}</p>
-          <div className="mt-3 rounded-md bg-black/20 px-3 py-2">
-            <span className="text-xs font-medium text-slate-500">
-              RECOMMENDATION
+          <p className="text-text-secondary">{finding.description}</p>
+          <div className="mt-3 rounded-md bg-void/60 px-3 py-2">
+            <span className="font-mono text-xs font-medium uppercase tracking-wider text-text-muted">
+              Recommendation
             </span>
-            <p className="mt-1 text-slate-300">{finding.recommendation}</p>
+            <p className="mt-1 text-text-secondary">{finding.recommendation}</p>
           </div>
         </div>
       )}
@@ -139,28 +138,28 @@ function ScanCard({ scan }: { scan: ScanSummary }) {
   const projectName = scan.projects?.name ?? "Unknown project";
 
   return (
-    <div className="rounded-xl border border-white/5 bg-white/[.02]">
+    <div className="glass rounded-xl">
       <button
         onClick={handleToggle}
         className="flex w-full items-center gap-4 px-5 py-4 text-left"
       >
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-semibold text-white">
+            <span className="text-sm font-semibold text-text-primary">
               {projectName}
             </span>
-            <span className="flex items-center gap-1 rounded-full bg-white/5 px-2 py-0.5 text-xs text-slate-400">
+            <span className="flex items-center gap-1 rounded-full border border-white/8 bg-white/[.04] px-2 py-0.5 text-xs text-text-secondary">
               <GitBranch className="h-3 w-3" />
               {scan.branch}
             </span>
             {scan.status === "running" && (
-              <span className="flex items-center gap-1 rounded-full bg-indigo-500/20 px-2 py-0.5 text-xs text-indigo-300">
+              <span className="flex items-center gap-1 rounded-full bg-violet-wash px-2 py-0.5 text-xs text-violet-glow border border-violet-glow/15">
                 <Loader2 className="h-3 w-3 animate-spin" />
                 Scanning
               </span>
             )}
           </div>
-          <div className="mt-1 flex items-center gap-3 text-xs text-slate-500">
+          <div className="mt-1 flex items-center gap-3 text-xs text-text-muted">
             <span className="flex items-center gap-1">
               <Package className="h-3 w-3" />
               {scan.total_deps} deps
@@ -174,53 +173,45 @@ function ScanCard({ scan }: { scan: ScanSummary }) {
 
         <div className="flex items-center gap-3">
           {scan.critical_count > 0 && (
-            <span className="flex items-center gap-1 rounded-full bg-red-500/20 px-2.5 py-1 text-xs font-medium text-red-300">
+            <span className="flex items-center gap-1 rounded-full bg-danger-wash px-2.5 py-1 text-xs font-medium text-danger">
               <AlertCircle className="h-3 w-3" />
               {scan.critical_count}
             </span>
           )}
           {scan.warning_count > 0 && (
-            <span className="flex items-center gap-1 rounded-full bg-amber-500/20 px-2.5 py-1 text-xs font-medium text-amber-300">
+            <span className="flex items-center gap-1 rounded-full bg-warning-wash px-2.5 py-1 text-xs font-medium text-warning">
               <AlertTriangle className="h-3 w-3" />
               {scan.warning_count}
             </span>
           )}
-          <span className="flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-medium text-emerald-300">
+          <span className="flex items-center gap-1 rounded-full bg-success-wash px-2.5 py-1 text-xs font-medium text-success">
             <CheckCircle2 className="h-3 w-3" />
             {scan.clean_count}
           </span>
           {expanded ? (
-            <ChevronDown className="h-4 w-4 text-slate-500" />
+            <ChevronDown className="h-4 w-4 text-text-muted" />
           ) : (
-            <ChevronRight className="h-4 w-4 text-slate-500" />
+            <ChevronRight className="h-4 w-4 text-text-muted" />
           )}
         </div>
       </button>
 
       {expanded && (
-        <div className="border-t border-white/5 px-5 py-4">
+        <div className="border-t border-white/[.06] px-5 py-4">
           {loadingFindings && (
             <div className="flex items-center justify-center py-4">
-              <Loader2 className="h-5 w-5 animate-spin text-slate-500" />
+              <Loader2 className="h-5 w-5 animate-spin text-text-muted" />
             </div>
           )}
           {!loadingFindings && findings.length > 0 && (
-            <>
-              <div className="space-y-2">
-                {findings.map((f) => (
-                  <FindingRow key={f.id} finding={f} />
-                ))}
-              </div>
-              <a
-                href="#"
-                className="mt-3 inline-flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300"
-              >
-                View full report <ExternalLink className="h-3 w-3" />
-              </a>
-            </>
+            <div className="space-y-2">
+              {findings.map((f) => (
+                <FindingRow key={f.id} finding={f} />
+              ))}
+            </div>
           )}
           {!loadingFindings && totalFindings === 0 && (
-            <div className="py-4 text-center text-sm text-slate-500">
+            <div className="py-4 text-center text-sm text-text-muted">
               No findings for this scan. All dependencies passed checks.
             </div>
           )}
@@ -231,6 +222,9 @@ function ScanCard({ scan }: { scan: ScanSummary }) {
 }
 
 // ── New scan modal ────────────────────────────────────────
+
+const modalInputClass =
+  "mt-1 w-full rounded-xl border border-white/8 bg-white/[.03] px-4 py-2.5 text-sm text-text-primary placeholder-text-muted outline-none transition-all duration-200 focus:border-cyan-glow/40 focus:shadow-[0_0_20px_rgba(0,212,255,0.08)]";
 
 function NewScanModal({
   projects,
@@ -312,18 +306,18 @@ function NewScanModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="relative w-full max-w-md rounded-xl border border-white/10 bg-slate-900 p-6">
+      <div className="animate-float-up relative w-full max-w-md rounded-2xl border border-white/[.06] bg-deep p-6 shadow-2xl">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-slate-500 hover:text-white"
+          className="absolute right-4 top-4 text-text-muted transition hover:text-text-primary"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <h2 className="text-lg font-semibold text-white">New scan</h2>
+        <h2 className="font-display text-lg font-semibold text-text-primary">New scan</h2>
 
         {scanError && (
-          <div className="mt-3 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+          <div className="mt-3 animate-slide-in rounded-xl border border-danger/20 bg-danger-wash px-3 py-2 text-sm text-danger">
             {scanError}
           </div>
         )}
@@ -333,13 +327,13 @@ function NewScanModal({
           <div className="mt-4 space-y-4">
             {projects.length > 0 && (
               <div>
-                <label className="block text-sm font-medium text-slate-300">
+                <label className="block text-sm font-medium text-text-secondary">
                   Project
                 </label>
                 <select
                   value={projectId}
                   onChange={(e) => setProjectId(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white outline-none focus:border-indigo-500"
+                  className={modalInputClass}
                 >
                   {projects.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -352,7 +346,7 @@ function NewScanModal({
 
             <div className="flex items-end gap-2">
               <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-300">
+                <label className="block text-sm font-medium text-text-secondary">
                   {projects.length > 0 ? "Or create new project" : "Project name"}
                 </label>
                 <input
@@ -360,23 +354,23 @@ function NewScanModal({
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
                   placeholder="my-app"
-                  className="mt-1 w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-white placeholder-slate-500 outline-none focus:border-indigo-500"
+                  className={modalInputClass}
                 />
               </div>
               <button
                 onClick={handleCreateProject}
                 disabled={!newProjectName.trim() || creatingProject}
-                className="rounded-lg bg-white/5 px-3 py-2.5 text-sm text-slate-300 transition hover:bg-white/10 disabled:opacity-50"
+                className="rounded-xl border border-white/8 bg-white/[.04] px-3 py-2.5 text-text-secondary transition hover:border-cyan-glow/20 hover:text-text-primary disabled:opacity-50"
               >
                 <Plus className="h-4 w-4" />
               </button>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300">
+              <label className="block text-sm font-medium text-text-secondary">
                 Upload lockfile
               </label>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-text-muted">
                 Supported: package-lock.json, package.json, requirements.txt, go.sum
               </p>
               <input
@@ -389,7 +383,7 @@ function NewScanModal({
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={!projectId || scanning}
-                className="mt-2 flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-white/10 bg-white/[.02] px-4 py-8 text-sm text-slate-400 transition hover:border-indigo-500/30 hover:bg-white/[.04] disabled:opacity-50"
+                className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 bg-white/[.02] px-4 py-8 text-sm text-text-muted transition hover:border-cyan-glow/30 hover:bg-white/[.04] disabled:opacity-50"
               >
                 <Upload className="h-5 w-5" />
                 Choose file or drag & drop
@@ -401,8 +395,11 @@ function NewScanModal({
         {/* Step: scanning */}
         {step === "scanning" && (
           <div className="mt-6 flex flex-col items-center gap-3 py-8">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
-            <p className="text-sm text-slate-400">
+            <div className="relative">
+              <div className="animate-radar h-16 w-16 rounded-full border border-cyan-glow/20" />
+              <Loader2 className="absolute left-1/2 top-1/2 h-6 w-6 -translate-x-1/2 -translate-y-1/2 animate-spin text-cyan-glow" />
+            </div>
+            <p className="mt-2 text-sm text-text-secondary">
               Analyzing dependencies, checking vulnerabilities, scoring health...
             </p>
           </div>
@@ -411,22 +408,22 @@ function NewScanModal({
         {/* Step: done */}
         {step === "done" && result && (
           <div className="mt-6 space-y-4">
-            <div className="flex items-center gap-2 text-emerald-400">
+            <div className="flex items-center gap-2 text-success">
               <CheckCircle2 className="h-5 w-5" />
-              <span className="font-medium">Scan complete</span>
+              <span className="font-display font-medium">Scan complete</span>
             </div>
             <div className="grid grid-cols-3 gap-3 text-center">
-              <div className="rounded-lg bg-white/5 p-3">
-                <div className="text-xl font-bold text-white">{result.total_deps}</div>
-                <div className="text-xs text-slate-500">Dependencies</div>
+              <div className="rounded-xl border border-white/[.06] bg-white/[.03] p-3">
+                <div className="text-xl font-bold text-text-primary">{result.total_deps}</div>
+                <div className="text-xs text-text-muted">Dependencies</div>
               </div>
-              <div className="rounded-lg bg-red-500/10 p-3">
-                <div className="text-xl font-bold text-red-400">{result.critical}</div>
-                <div className="text-xs text-slate-500">Critical</div>
+              <div className="rounded-xl border border-danger/15 bg-danger-wash p-3">
+                <div className="text-xl font-bold text-danger">{result.critical}</div>
+                <div className="text-xs text-text-muted">Critical</div>
               </div>
-              <div className="rounded-lg bg-amber-500/10 p-3">
-                <div className="text-xl font-bold text-amber-400">{result.warnings}</div>
-                <div className="text-xs text-slate-500">Warnings</div>
+              <div className="rounded-xl border border-warning/15 bg-warning-wash p-3">
+                <div className="text-xl font-bold text-warning">{result.warnings}</div>
+                <div className="text-xs text-text-muted">Warnings</div>
               </div>
             </div>
             <button
@@ -434,7 +431,7 @@ function NewScanModal({
                 onScanComplete();
                 onClose();
               }}
-              className="w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500"
+              className="w-full rounded-xl bg-gradient-to-r from-cyan-glow to-violet-glow py-2.5 text-sm font-bold text-void transition-all hover:shadow-[0_0_24px_rgba(0,212,255,0.3)]"
             >
               View results
             </button>
@@ -475,8 +472,11 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-925">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-void">
+        <div className="relative">
+          <div className="animate-radar h-20 w-20 rounded-full border border-cyan-glow/20" />
+          <div className="absolute left-1/2 top-1/2 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan-glow animate-glow-pulse" />
+        </div>
       </div>
     );
   }
@@ -495,13 +495,16 @@ export default function Dashboard() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-925 pt-16">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-void pt-16">
+      <div className="pointer-events-none absolute inset-0 bg-grid opacity-10" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,212,255,.04),transparent_50%)]" />
+
+      <div className="relative mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-            <p className="mt-1 text-sm text-slate-400">
+          <div className="animate-float-up">
+            <h1 className="font-display text-2xl font-bold text-text-primary">Dashboard</h1>
+            <p className="mt-1 text-sm text-text-secondary">
               {scans.length > 0
                 ? `Supply chain overview across ${projects.length} monitored project${projects.length !== 1 ? "s" : ""}.`
                 : "Upload a lockfile to run your first dependency scan."}
@@ -509,7 +512,7 @@ export default function Dashboard() {
           </div>
           <button
             onClick={() => setShowNewScan(true)}
-            className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500"
+            className="animate-float-up inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-glow to-violet-glow px-5 py-2.5 text-sm font-bold text-void transition-all hover:shadow-[0_0_24px_rgba(0,212,255,0.3)]"
           >
             <Shield className="h-4 w-4" />
             New scan
@@ -523,36 +526,40 @@ export default function Dashboard() {
               label: "Total dependencies",
               value: totalDeps.toLocaleString(),
               icon: Package,
-              color: "text-slate-300",
+              color: "text-text-primary",
+              glow: "",
             },
             {
               label: "Critical findings",
               value: totalCritical,
               icon: AlertCircle,
-              color: "text-red-400",
+              color: "text-danger",
+              glow: totalCritical > 0 ? "border-danger/20 bg-danger-wash" : "",
             },
             {
               label: "Warnings",
               value: totalWarnings,
               icon: AlertTriangle,
-              color: "text-amber-400",
+              color: "text-warning",
+              glow: totalWarnings > 0 ? "border-warning/20 bg-warning-wash" : "",
             },
             {
               label: "Projects",
               value: projects.length,
               icon: GitBranch,
-              color: "text-indigo-400",
+              color: "text-violet-glow",
+              glow: "",
             },
-          ].map((stat) => (
+          ].map((stat, i) => (
             <div
               key={stat.label}
-              className="rounded-xl border border-white/5 bg-white/[.02] p-4"
+              className={`animate-float-up rounded-xl border border-white/[.06] bg-white/[.02] p-4 delay-${(i + 1) * 100} ${stat.glow}`}
             >
               <div className="flex items-center gap-2">
                 <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                <span className="text-xs text-slate-500">{stat.label}</span>
+                <span className="text-xs text-text-muted">{stat.label}</span>
               </div>
-              <div className={`mt-2 text-2xl font-bold ${stat.color}`}>
+              <div className={`mt-2 font-display text-2xl font-bold ${stat.color}`}>
                 {stat.value}
               </div>
             </div>
@@ -563,16 +570,16 @@ export default function Dashboard() {
         {scans.length > 0 && (
           <div className="mt-8 flex items-center gap-3">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-muted" />
               <input
                 type="text"
                 placeholder="Filter projects..."
                 value={filterText}
                 onChange={(e) => setFilterText(e.target.value)}
-                className="w-full rounded-lg border border-white/10 bg-white/5 py-2.5 pl-10 pr-3 text-sm text-white placeholder-slate-500 outline-none transition focus:border-indigo-500"
+                className="w-full rounded-xl border border-white/8 bg-white/[.03] py-2.5 pl-10 pr-3 text-sm text-text-primary placeholder-text-muted outline-none transition-all duration-200 focus:border-cyan-glow/40 focus:shadow-[0_0_20px_rgba(0,212,255,0.08)]"
               />
             </div>
-            <button className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm text-slate-400 transition hover:bg-white/10">
+            <button className="flex items-center gap-1.5 rounded-xl border border-white/8 bg-white/[.03] px-3 py-2.5 text-sm text-text-secondary transition hover:border-cyan-glow/20 hover:text-text-primary">
               <Filter className="h-4 w-4" />
               Filter
             </button>
@@ -582,25 +589,28 @@ export default function Dashboard() {
         {/* Loading */}
         {loadingData && (
           <div className="mt-12 flex items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-slate-500" />
+            <Loader2 className="h-6 w-6 animate-spin text-cyan-glow" />
           </div>
         )}
 
         {/* Empty state */}
         {!loadingData && scans.length === 0 && (
-          <div className="mt-12 rounded-xl border border-dashed border-white/10 bg-white/[.02] py-16 text-center">
-            <Upload className="mx-auto h-10 w-10 text-slate-600" />
-            <h3 className="mt-4 text-lg font-medium text-white">
+          <div className="mt-12 animate-float-up rounded-2xl border border-dashed border-white/10 bg-white/[.02] py-16 text-center">
+            <div className="relative mx-auto h-16 w-16">
+              <div className="animate-radar absolute inset-0 rounded-full border border-cyan-glow/10" />
+              <Upload className="absolute left-1/2 top-1/2 h-8 w-8 -translate-x-1/2 -translate-y-1/2 text-text-muted" />
+            </div>
+            <h3 className="mt-6 font-display text-lg font-semibold text-text-primary">
               No scans yet
             </h3>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-slate-500">
+            <p className="mx-auto mt-2 max-w-sm text-sm text-text-secondary">
               Upload a package-lock.json, requirements.txt, or go.sum file to
               scan your dependencies for vulnerabilities, health issues, and
               supply chain anomalies.
             </p>
             <button
               onClick={() => setShowNewScan(true)}
-              className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-500"
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-cyan-glow to-violet-glow px-5 py-2.5 text-sm font-bold text-void transition-all hover:shadow-[0_0_24px_rgba(0,212,255,0.3)]"
             >
               <Plus className="h-4 w-4" />
               Run your first scan
@@ -615,7 +625,7 @@ export default function Dashboard() {
               <ScanCard key={scan.id} scan={scan} />
             ))}
             {filtered.length === 0 && (
-              <div className="rounded-xl border border-white/5 bg-white/[.02] py-12 text-center text-sm text-slate-500">
+              <div className="glass rounded-xl py-12 text-center text-sm text-text-muted">
                 No projects match your filter.
               </div>
             )}

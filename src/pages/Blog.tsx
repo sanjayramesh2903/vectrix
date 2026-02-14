@@ -59,44 +59,52 @@ const posts: Post[] = [
 ];
 
 const categoryColors: Record<string, string> = {
-  "Threat Analysis": "bg-red-500/10 text-red-300",
-  Engineering: "bg-indigo-500/10 text-indigo-300",
-  Research: "bg-emerald-500/10 text-emerald-300",
-  Tutorial: "bg-amber-500/10 text-amber-300",
+  "Threat Analysis": "bg-danger-wash text-danger border-danger/15",
+  Engineering: "bg-violet-wash text-violet-glow border-violet-glow/15",
+  Research: "bg-success-wash text-success border-success/15",
+  Tutorial: "bg-warning-wash text-warning border-warning/15",
 };
 
 export default function Blog() {
   return (
-    <div className="min-h-screen bg-slate-925 pt-24 pb-20">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+    <div className="relative min-h-screen bg-void pt-28 pb-24">
+      <div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,212,255,.05),transparent_50%)]" />
+
+      <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-white sm:text-4xl">Blog</h1>
-          <p className="mt-3 text-slate-400">
+          <span className="font-mono text-xs font-medium uppercase tracking-widest text-cyan-glow">
+            Insights
+          </span>
+          <h1 className="mt-3 font-display text-3xl font-bold text-text-primary sm:text-5xl">
+            Blog
+          </h1>
+          <p className="mt-4 text-text-secondary">
             Threat research, engineering deep dives, and practical guides for
             securing your software supply chain.
           </p>
         </div>
 
-        <div className="mt-12 space-y-6">
-          {posts.map((post) => (
+        <div className="mt-14 space-y-5">
+          {posts.map((post, i) => (
             <Link
               key={post.slug}
               to={`/blog/${post.slug}`}
-              className="group block rounded-xl border border-white/5 bg-white/[.02] p-6 transition hover:border-indigo-500/20 hover:bg-white/[.04]"
+              className={`group glass block overflow-hidden rounded-2xl p-7 animate-float-up delay-${(i + 1) * 100}`}
             >
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                    categoryColors[post.category] ?? "bg-white/10 text-slate-300"
+                  className={`rounded-full border px-3 py-0.5 text-xs font-medium ${
+                    categoryColors[post.category] ?? "bg-white/5 text-text-secondary border-white/10"
                   }`}
                 >
                   {post.category}
                 </span>
-                <span className="flex items-center gap-1 text-xs text-slate-500">
+                <span className="flex items-center gap-1.5 text-xs text-text-muted">
                   <Clock className="h-3 w-3" />
                   {post.readTime}
                 </span>
-                <span className="text-xs text-slate-600">
+                <span className="text-xs text-text-muted">
                   {new Date(post.date).toLocaleDateString("en-US", {
                     month: "short",
                     day: "numeric",
@@ -104,14 +112,14 @@ export default function Blog() {
                   })}
                 </span>
               </div>
-              <h2 className="mt-3 text-lg font-semibold text-white group-hover:text-indigo-300">
+              <h2 className="mt-4 font-display text-lg font-semibold text-text-primary transition-colors group-hover:text-cyan-glow">
                 {post.title}
               </h2>
-              <p className="mt-2 text-sm leading-relaxed text-slate-400">
+              <p className="mt-2.5 text-sm leading-relaxed text-text-secondary">
                 {post.excerpt}
               </p>
-              <span className="mt-3 inline-flex items-center gap-1 text-sm text-indigo-400 group-hover:text-indigo-300">
-                Read more <ArrowRight className="h-3.5 w-3.5" />
+              <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-cyan-glow transition-all group-hover:gap-2.5">
+                Read more <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </Link>
           ))}

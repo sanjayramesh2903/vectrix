@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import {
-  Shield,
   GitBranch,
   BarChart3,
   AlertTriangle,
@@ -11,42 +10,56 @@ import {
   Terminal,
 } from "lucide-react";
 
+/* ── Data ──────────────────────────────────────────────── */
+
 const features = [
   {
     icon: GitBranch,
     title: "Deep Dependency Mapping",
     description:
-      "Recursively resolve your entire dependency tree — direct and transitive — across npm, PyPI, Maven, and Go modules. Surface hidden relationships other scanners miss.",
+      "Recursively resolve your entire dependency tree — direct and transitive — across npm, PyPI, Maven, and Go modules.",
+    accent: "from-cyan-glow/20 to-cyan-glow/0",
+    iconColor: "text-cyan-glow",
   },
   {
     icon: AlertTriangle,
     title: "Anomaly Detection",
     description:
-      "Our models flag suspicious patterns: sudden maintainer changes, obfuscated install scripts, typosquatting candidates, and unexpected binary payloads in packages.",
+      "Flag suspicious patterns: sudden maintainer changes, obfuscated install scripts, typosquatting candidates, and unexpected binary payloads.",
+    accent: "from-danger/20 to-danger/0",
+    iconColor: "text-danger",
   },
   {
     icon: BarChart3,
     title: "Maintenance Health Scores",
     description:
-      "Each dependency gets a composite score based on commit frequency, issue response time, release cadence, and bus factor — so you know what's actually maintained.",
+      "Composite score based on commit frequency, issue response time, release cadence, and bus factor.",
+    accent: "from-violet-glow/20 to-violet-glow/0",
+    iconColor: "text-violet-glow",
   },
   {
     icon: Zap,
     title: "CI/CD Integration",
     description:
-      "Drop a single step into GitHub Actions, GitLab CI, or Jenkins. Scans run on every PR and block merges when risk thresholds are exceeded.",
+      "Drop a single step into GitHub Actions, GitLab CI, or Jenkins. Block merges when risk thresholds are exceeded.",
+    accent: "from-warning/20 to-warning/0",
+    iconColor: "text-warning",
   },
   {
     icon: Lock,
     title: "License Compliance Engine",
     description:
-      "Automatically audit transitive license obligations. Define policies per project and get alerts before incompatible licenses enter your dependency graph.",
+      "Audit transitive license obligations. Define policies per project and get alerts before incompatible licenses enter your graph.",
+    accent: "from-success/20 to-success/0",
+    iconColor: "text-success",
   },
   {
     icon: Terminal,
     title: "Remediation Playbooks",
     description:
-      "Get actionable upgrade paths, patch suggestions, and alternative package recommendations — not just CVE numbers and severity labels.",
+      "Actionable upgrade paths, patch suggestions, and alternative package recommendations — not just CVE numbers.",
+    accent: "from-cyan-glow/20 to-violet-glow/0",
+    iconColor: "text-cyan-glow",
   },
 ];
 
@@ -103,42 +116,68 @@ const stats = [
   { value: "6,200+", label: "Teams protected" },
 ];
 
+/* ── Component ─────────────────────────────────────────── */
+
 export default function Landing() {
   return (
-    <div className="bg-slate-925 text-white">
-      {/* Hero */}
-      <section className="relative overflow-hidden pt-32 pb-20 sm:pt-40 sm:pb-28">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,.15),transparent_60%)]" />
-        <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-indigo-500/20 bg-indigo-500/10 px-3 py-1 text-xs font-medium text-indigo-300">
-            <span className="h-1.5 w-1.5 rounded-full bg-indigo-400" />
-            Now scanning Go modules &amp; Cargo crates
+    <div className="bg-void text-text-primary">
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden pt-32 pb-24 sm:pt-44 sm:pb-32">
+        {/* Background effects */}
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,212,255,.08),transparent_60%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(124,92,252,.06),transparent_50%)]" />
+
+        {/* Radar rings */}
+        <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
+          <div className="animate-radar h-64 w-64 rounded-full border border-cyan-glow/20" />
+          <div className="animate-radar delay-1000 absolute inset-0 h-64 w-64 rounded-full border border-cyan-glow/15" />
+          <div className="animate-radar delay-200 absolute inset-0 h-64 w-64 rounded-full border border-violet-glow/10" />
+        </div>
+
+        {/* Floating orbs */}
+        <div className="pointer-events-none absolute left-[15%] top-[20%] h-48 w-48 animate-drift rounded-full bg-cyan-glow/[.03] blur-3xl" />
+        <div className="pointer-events-none absolute right-[10%] top-[30%] h-64 w-64 animate-drift delay-400 rounded-full bg-violet-glow/[.03] blur-3xl" />
+
+        <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
+          {/* Badge */}
+          <div className="animate-float-up mb-6 inline-flex items-center gap-2.5 rounded-full border border-cyan-glow/15 bg-cyan-wash px-4 py-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-cyan-glow animate-glow-pulse" />
+            <span className="font-mono text-xs font-medium text-cyan-glow">
+              Now scanning Go modules &amp; Cargo crates
+            </span>
           </div>
-          <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-6xl">
+
+          {/* Heading */}
+          <h1 className="animate-float-up delay-100 font-display text-5xl font-extrabold leading-[1.1] tracking-tight sm:text-7xl">
             Know what's in your
             <br />
-            <span className="bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-cyan-glow via-cyan-glow to-violet-glow bg-clip-text text-transparent text-glow-cyan">
               software supply chain
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-slate-400">
+
+          {/* Subheading */}
+          <p className="animate-float-up delay-200 mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-text-secondary">
             Vectrix uses AI to continuously analyze your dependency graph —
             surfacing security risks, license conflicts, and maintenance red
             flags before they reach production.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+
+          {/* CTAs */}
+          <div className="animate-float-up delay-300 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               to="/signup"
-              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-indigo-500"
+              className="group inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-glow to-violet-glow px-7 py-3.5 text-sm font-bold text-void transition-all hover:shadow-[0_0_32px_rgba(0,212,255,0.35)]"
             >
               Start free trial
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <a
               href="https://docs.vectrix.dev"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-6 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/5"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/8 bg-white/[.03] px-7 py-3.5 text-sm font-medium text-text-secondary transition-all hover:border-cyan-glow/20 hover:text-text-primary"
             >
               Read the docs
             </a>
@@ -146,172 +185,205 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="border-y border-white/5 bg-white/[.02]">
-        <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 px-4 py-10 sm:grid-cols-4 sm:px-6">
-          {stats.map((s) => (
-            <div key={s.label} className="text-center">
-              <div className="text-2xl font-bold text-white sm:text-3xl">
+      {/* ── STATS ── */}
+      <section className="relative border-y border-white/[.04]">
+        <div className="absolute inset-0 animate-shimmer" />
+        <div className="relative mx-auto grid max-w-5xl grid-cols-2 gap-6 px-4 py-12 sm:grid-cols-4 sm:px-6">
+          {stats.map((s, i) => (
+            <div
+              key={s.label}
+              className={`animate-float-up text-center delay-${(i + 1) * 100}`}
+            >
+              <div className="font-display text-3xl font-extrabold text-text-primary sm:text-4xl">
                 {s.value}
               </div>
-              <div className="mt-1 text-sm text-slate-500">{s.label}</div>
+              <div className="mt-1.5 text-sm text-text-muted">{s.label}</div>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* ── FEATURES ── */}
+      <section id="features" className="relative py-24 sm:py-32">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(124,92,252,.04),transparent_70%)]" />
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <span className="font-mono text-xs font-medium uppercase tracking-widest text-cyan-glow">
+              Capabilities
+            </span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-5xl">
               Built for the way you ship software
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-slate-400">
+            <p className="mx-auto mt-4 max-w-2xl text-text-secondary">
               From the first dependency you install to the container you deploy,
               Vectrix provides continuous visibility into your supply chain risk.
             </p>
           </div>
 
-          <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
+          <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((f, i) => (
               <div
                 key={f.title}
-                className="rounded-xl border border-white/5 bg-white/[.02] p-6 transition hover:border-indigo-500/20 hover:bg-white/[.04]"
+                className={`group glass relative overflow-hidden rounded-2xl p-6 animate-float-up delay-${(i + 1) * 100}`}
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/10">
-                  <f.icon className="h-5 w-5 text-indigo-400" />
+                <div
+                  className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${f.accent} opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
+                />
+
+                <div className="relative">
+                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl border border-white/8 bg-white/[.03] ${f.iconColor}`}>
+                    <f.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-5 font-display text-lg font-semibold text-text-primary">
+                    {f.title}
+                  </h3>
+                  <p className="mt-2.5 text-sm leading-relaxed text-text-secondary">
+                    {f.description}
+                  </p>
                 </div>
-                <h3 className="mt-4 text-lg font-semibold">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate-400">
-                  {f.description}
-                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Code preview */}
-      <section className="border-y border-white/5 bg-white/[.02] py-20 sm:py-28">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-10 lg:grid-cols-2">
+      {/* ── TERMINAL PREVIEW ── */}
+      <section className="relative border-y border-white/[.04] py-24 sm:py-32">
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
+
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight">
+              <span className="font-mono text-xs font-medium uppercase tracking-widest text-cyan-glow">
+                Developer experience
+              </span>
+              <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
                 One command to scan
               </h2>
-              <p className="mt-4 text-slate-400">
+              <p className="mt-4 text-text-secondary">
                 Install the CLI, authenticate, and run your first scan in under
                 a minute. Results stream to your dashboard in real time.
               </p>
-              <div className="mt-6 space-y-3 text-sm text-slate-300">
+              <div className="mt-7 space-y-3.5">
                 {[
                   "Works with monorepos and multi-language projects",
                   "Runs locally or in CI — no code leaves your network",
                   "Diff-aware scanning on pull requests",
                 ].map((item) => (
-                  <div key={item} className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
-                    <span>{item}</span>
+                  <div key={item} className="flex items-start gap-2.5">
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success/10">
+                      <Check className="h-3 w-3 text-success" />
+                    </div>
+                    <span className="text-sm text-text-secondary">{item}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="overflow-hidden rounded-xl border border-white/10 bg-slate-900 font-mono text-sm">
-              <div className="flex items-center gap-1.5 border-b border-white/5 px-4 py-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
-                <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
-                <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
-                <span className="ml-2 text-xs text-slate-500">terminal</span>
+            <div className="glass glow-cyan overflow-hidden rounded-2xl">
+              <div className="flex items-center gap-2 border-b border-white/[.04] px-5 py-3.5">
+                <div className="flex gap-1.5">
+                  <span className="h-2.5 w-2.5 rounded-full bg-danger/60" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-warning/60" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-success/60" />
+                </div>
+                <span className="ml-2 font-mono text-xs text-text-muted">
+                  ~/acme/payments-service
+                </span>
               </div>
-              <pre className="overflow-x-auto px-4 py-4 leading-relaxed text-slate-300">
-                <code>{`$ npx vectrix scan
+              <pre className="overflow-x-auto px-5 py-5 font-mono text-[13px] leading-relaxed text-text-secondary">
+                <code>
+                  <span className="text-text-muted">$</span>{" "}
+                  <span className="text-cyan-glow">npx vectrix scan</span>
+                  {`
 
-  Resolving dependency graph... done (1,247 packages)
-  Running anomaly detection... done
+  `}<span className="text-text-muted">Resolving dependency graph...</span>{" "}<span className="text-success">done</span>{` (1,247 packages)
+  `}<span className="text-text-muted">Running anomaly detection...</span>{" "}<span className="text-success">done</span>{`
 
-  ┌─────────────────────────────────────┐
-  │ 3 critical   12 warning   1,232 ok │
-  └─────────────────────────────────────┘
+  ┌─────────────────────────────────────────┐
+  │ `}<span className="text-danger font-semibold">3 critical</span>{"   "}<span className="text-warning font-semibold">12 warning</span>{"   "}<span className="text-success font-semibold">1,232 ok</span>{` │
+  └─────────────────────────────────────────┘
 
-  CRITICAL  colors@1.4.1
-    → Maintainer pushed malicious payload in v1.4.1
-    → Recommendation: pin to 1.4.0 or migrate to picocolors
+  `}<span className="font-semibold text-danger">CRITICAL</span>{`  colors@1.4.1
+    → Maintainer pushed malicious payload
+    → `}<span className="text-text-muted">Recommendation: pin to 1.4.0</span>{`
 
-  CRITICAL  event-stream@3.3.6
-    → Transitive dependency flatmap-stream contains
-      obfuscated crypto-mining payload
-    → Recommendation: upgrade to event-stream@4.0.1
+  `}<span className="font-semibold text-danger">CRITICAL</span>{`  event-stream@3.3.6
+    → Obfuscated crypto-mining payload
+    → `}<span className="text-text-muted">Recommendation: upgrade to 4.0.1</span>{`
 
-  WARNING   lodash@4.17.19
+  `}<span className="font-semibold text-warning">WARNING</span>{`   lodash@4.17.19
     → 2 unpatched prototype pollution CVEs
-    → Recommendation: upgrade to 4.17.21
-
-  Full report → https://app.vectrix.dev/scans/a7f3e9`}</code>
+    → `}<span className="text-text-muted">Recommendation: upgrade to 4.17.21</span>
+                </code>
               </pre>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing */}
-      <section id="pricing" className="py-20 sm:py-28">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {/* ── PRICING ── */}
+      <section id="pricing" className="relative py-24 sm:py-32">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(0,212,255,.04),transparent_60%)]" />
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            <span className="font-mono text-xs font-medium uppercase tracking-widest text-cyan-glow">
+              Pricing
+            </span>
+            <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-5xl">
               Simple, transparent pricing
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-slate-400">
+            <p className="mx-auto mt-4 max-w-xl text-text-secondary">
               Start free, scale as your team grows. All plans include core
               scanning and anomaly detection.
             </p>
           </div>
 
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {tiers.map((tier) => (
               <div
                 key={tier.name}
-                className={`relative rounded-xl border p-6 ${
+                className={`relative rounded-2xl p-7 transition-all duration-300 ${
                   tier.highlight
-                    ? "border-indigo-500/40 bg-indigo-500/[.05]"
-                    : "border-white/5 bg-white/[.02]"
+                    ? "glass glow-cyan-strong animate-border-glow"
+                    : "glass"
                 }`}
               >
                 {tier.highlight && (
-                  <span className="absolute -top-3 left-4 rounded-full bg-indigo-600 px-3 py-0.5 text-xs font-medium text-white">
+                  <span className="absolute -top-3 left-5 rounded-full bg-gradient-to-r from-cyan-glow to-violet-glow px-4 py-0.5 text-xs font-bold text-void">
                     Most popular
                   </span>
                 )}
-                <h3 className="text-lg font-semibold">{tier.name}</h3>
-                <div className="mt-3 flex items-baseline gap-1">
+                <h3 className="font-display text-lg font-semibold">{tier.name}</h3>
+                <div className="mt-4 flex items-baseline gap-1">
                   {tier.price === "Custom" ? (
-                    <span className="text-3xl font-bold">Custom</span>
+                    <span className="font-display text-4xl font-extrabold">Custom</span>
                   ) : (
                     <>
-                      <span className="text-3xl font-bold">${tier.price}</span>
-                      <span className="text-sm text-slate-500">/mo</span>
+                      <span className="font-display text-4xl font-extrabold">${tier.price}</span>
+                      <span className="text-sm text-text-muted">/mo</span>
                     </>
                   )}
                 </div>
-                <p className="mt-3 text-sm text-slate-400">{tier.description}</p>
-                <ul className="mt-5 space-y-2.5">
+                <p className="mt-3 text-sm text-text-secondary">{tier.description}</p>
+                <ul className="mt-6 space-y-3">
                   {tier.features.map((f) => (
-                    <li
-                      key={f}
-                      className="flex items-start gap-2 text-sm text-slate-300"
-                    >
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-indigo-400" />
-                      {f}
+                    <li key={f} className="flex items-start gap-2.5 text-sm">
+                      <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cyan-glow/10">
+                        <Check className="h-2.5 w-2.5 text-cyan-glow" />
+                      </div>
+                      <span className="text-text-secondary">{f}</span>
                     </li>
                   ))}
                 </ul>
                 <Link
                   to={tier.name === "Enterprise" ? "#" : "/signup"}
-                  className={`mt-6 block rounded-lg py-2.5 text-center text-sm font-medium transition ${
+                  className={`mt-7 block rounded-xl py-3 text-center text-sm font-semibold transition-all ${
                     tier.highlight
-                      ? "bg-indigo-600 text-white hover:bg-indigo-500"
-                      : "bg-white/5 text-slate-300 hover:bg-white/10"
+                      ? "bg-gradient-to-r from-cyan-glow to-violet-glow text-void hover:shadow-[0_0_24px_rgba(0,212,255,0.3)]"
+                      : "border border-white/8 bg-white/[.03] text-text-secondary hover:border-cyan-glow/20 hover:text-text-primary"
                   }`}
                 >
                   {tier.cta}
@@ -322,23 +394,32 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="border-t border-white/5 bg-white/[.02] py-20 sm:py-24">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-          <Shield className="mx-auto h-10 w-10 text-indigo-400" />
-          <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
+      {/* ── CTA ── */}
+      <section className="relative border-t border-white/[.04] py-24 sm:py-28">
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,212,255,.06),transparent_50%)]" />
+
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="animate-radar h-48 w-48 rounded-full border border-cyan-glow/10" />
+        </div>
+
+        <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-glow/20 bg-cyan-wash">
+            <div className="h-3 w-3 rounded-full bg-cyan-glow animate-glow-pulse" />
+          </div>
+          <h2 className="mt-6 font-display text-3xl font-bold tracking-tight sm:text-5xl">
             Stop shipping blind
           </h2>
-          <p className="mx-auto mt-4 max-w-xl text-slate-400">
+          <p className="mx-auto mt-4 max-w-xl text-text-secondary">
             Join thousands of engineering teams using Vectrix to secure their
             software supply chain. Set up in under five minutes.
           </p>
           <Link
             to="/signup"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-indigo-500"
+            className="group mt-8 inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-glow to-violet-glow px-8 py-3.5 text-sm font-bold text-void transition-all hover:shadow-[0_0_32px_rgba(0,212,255,0.35)]"
           >
             Start your free trial
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
         </div>
       </section>
