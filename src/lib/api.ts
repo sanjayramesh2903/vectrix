@@ -1,5 +1,5 @@
 /**
- * Frontend API client for calling Vectrix serverless endpoints.
+ * Frontend API client for calling Ripptide serverless endpoints.
  */
 
 import { supabase } from "./supabase";

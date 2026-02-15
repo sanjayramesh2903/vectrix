@@ -6,8 +6,8 @@ import { homedir } from "node:os";
 
 // ── Config ────────────────────────────────────────────────
 
-const CONFIG_PATH = resolve(homedir(), ".vectrix", "config.json");
-const API_BASE = process.env.VECTRIX_API_URL ?? "https://vectrix.vercel.app/api";
+const CONFIG_PATH = resolve(homedir(), ".ripptide", "config.json");
+const API_BASE = process.env.RIPPTIDE_API_URL ?? "https://ripptide.vercel.app/api";
 
 interface Config {
   token: string;
@@ -24,7 +24,7 @@ function loadConfig(): Config | null {
 }
 
 function saveConfig(config: Config): void {
-  const dir = resolve(homedir(), ".vectrix");
+  const dir = resolve(homedir(), ".ripptide");
   if (!existsSync(dir)) {
     const { mkdirSync } = await_import_fs();
     mkdirSync(dir, { recursive: true });
@@ -60,6 +60,7 @@ const LOCKFILES = [
   "package.json",
   "requirements.txt",
   "go.sum",
+  "Cargo.lock",
 ];
 
 function detectLockfile(dir: string): { path: string; name: string } | null {
@@ -121,14 +122,14 @@ async function apiScan(
 
 function printHelp(): void {
   console.log(`
-${BOLD}vectrix${RESET} — AI-powered dependency intelligence
+${BOLD}ripptide${RESET} — AI-powered supply chain security
 
 ${BOLD}USAGE${RESET}
-  vectrix <command> [options]
+  ripptide <command> [options]
 
 ${BOLD}COMMANDS${RESET}
   scan              Scan dependencies in the current directory
-  login <token>     Authenticate with your Vectrix API token
+  login <token>     Authenticate with your Ripptide API token
   set-project <id>  Set the default project ID for scans
   help              Show this help message
 
@@ -138,14 +139,14 @@ ${BOLD}OPTIONS${RESET}
   --json            Output results as JSON
 
 ${BOLD}ENVIRONMENT${RESET}
-  VECTRIX_TOKEN     API token (alternative to 'vectrix login')
-  VECTRIX_PROJECT   Project ID (alternative to 'vectrix set-project')
-  VECTRIX_API_URL   Custom API endpoint
+  RIPPTIDE_TOKEN     API token (alternative to 'ripptide login')
+  RIPPTIDE_PROJECT   Project ID (alternative to 'ripptide set-project')
+  RIPPTIDE_API_URL   Custom API endpoint
 
 ${BOLD}EXAMPLES${RESET}
-  vectrix scan
-  vectrix scan --file ./package-lock.json
-  vectrix scan --json | jq '.findings[] | select(.severity == "critical")'
+  ripptide scan
+  ripptide scan --file ./package-lock.json
+  ripptide scan --json | jq '.findings[] | select(.severity == "critical")'
 `);
 }
 
@@ -181,20 +182,20 @@ async function cmdScan(args: string[]): Promise<void> {
 
   // Resolve token
   const config = loadConfig();
-  const token = process.env.VECTRIX_TOKEN ?? config?.token;
+  const token = process.env.RIPPTIDE_TOKEN ?? config?.token;
   if (!token) {
     console.error(
-      `${RED}Error:${RESET} Not authenticated. Run ${BOLD}vectrix login <token>${RESET} or set VECTRIX_TOKEN.`
+      `${RED}Error:${RESET} Not authenticated. Run ${BOLD}ripptide login <token>${RESET} or set RIPPTIDE_TOKEN.`
     );
     process.exit(1);
   }
 
   // Resolve project
   projectId =
-    projectId ?? process.env.VECTRIX_PROJECT ?? config?.project_id ?? null;
+    projectId ?? process.env.RIPPTIDE_PROJECT ?? config?.project_id ?? null;
   if (!projectId) {
     console.error(
-      `${RED}Error:${RESET} No project ID. Run ${BOLD}vectrix set-project <id>${RESET} or use --project.`
+      `${RED}Error:${RESET} No project ID. Run ${BOLD}ripptide set-project <id>${RESET} or use --project.`
     );
     process.exit(1);
   }
@@ -292,14 +293,14 @@ async function main(): Promise<void> {
       break;
     case "login":
       if (!args[1]) {
-        console.error(`${RED}Usage:${RESET} vectrix login <token>`);
+        console.error(`${RED}Usage:${RESET} ripptide login <token>`);
         process.exit(1);
       }
       await cmdLogin(args[1]);
       break;
     case "set-project":
       if (!args[1]) {
-        console.error(`${RED}Usage:${RESET} vectrix set-project <project-id>`);
+        console.error(`${RED}Usage:${RESET} ripptide set-project <project-id>`);
         process.exit(1);
       }
       cmdSetProject(args[1]);

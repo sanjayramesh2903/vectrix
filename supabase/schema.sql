@@ -1,5 +1,5 @@
 -- ============================================================
--- Vectrix database schema
+-- Ripptide database schema
 -- Run this in Supabase SQL Editor (Dashboard → SQL Editor → New Query)
 -- ============================================================
 

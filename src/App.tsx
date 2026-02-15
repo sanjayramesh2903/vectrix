@@ -13,6 +13,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Changelog from "./pages/Changelog";
 import Status from "./pages/Status";
+import Docs from "./pages/Docs";
 
 function Layout({ children, showFooter = true }: { children: React.ReactNode; showFooter?: boolean }) {
   return (
@@ -100,6 +101,14 @@ export default function App() {
             element={
               <Layout>
                 <Status />
+              </Layout>
+            }
+          />
+          <Route
+            path="/docs"
+            element={
+              <Layout>
+                <Docs />
               </Layout>
             }
           />

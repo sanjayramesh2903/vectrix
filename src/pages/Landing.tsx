@@ -9,6 +9,7 @@ import {
   Check,
   Terminal,
 } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 /* ── Data ──────────────────────────────────────────────── */
 
@@ -17,49 +18,49 @@ const features = [
     icon: GitBranch,
     title: "Deep Dependency Mapping",
     description:
-      "Recursively resolve your entire dependency tree — direct and transitive — across npm, PyPI, Maven, and Go modules.",
-    accent: "from-cyan-glow/20 to-cyan-glow/0",
-    iconColor: "text-cyan-glow",
+      "Recursively resolve your entire dependency tree — direct and transitive — across npm, PyPI, Maven, Cargo crates, and Go modules.",
+    accent: "from-tide/20 to-tide/0",
+    iconColor: "text-tide",
   },
   {
     icon: AlertTriangle,
     title: "Anomaly Detection",
     description:
       "Flag suspicious patterns: sudden maintainer changes, obfuscated install scripts, typosquatting candidates, and unexpected binary payloads.",
-    accent: "from-danger/20 to-danger/0",
-    iconColor: "text-danger",
+    accent: "from-coral/20 to-coral/0",
+    iconColor: "text-coral",
   },
   {
     icon: BarChart3,
     title: "Maintenance Health Scores",
     description:
       "Composite score based on commit frequency, issue response time, release cadence, and bus factor.",
-    accent: "from-violet-glow/20 to-violet-glow/0",
-    iconColor: "text-violet-glow",
+    accent: "from-phosphor/20 to-phosphor/0",
+    iconColor: "text-phosphor",
   },
   {
     icon: Zap,
     title: "CI/CD Integration",
     description:
       "Drop a single step into GitHub Actions, GitLab CI, or Jenkins. Block merges when risk thresholds are exceeded.",
-    accent: "from-warning/20 to-warning/0",
-    iconColor: "text-warning",
+    accent: "from-amber/20 to-amber/0",
+    iconColor: "text-amber",
   },
   {
     icon: Lock,
     title: "License Compliance Engine",
     description:
       "Audit transitive license obligations. Define policies per project and get alerts before incompatible licenses enter your graph.",
-    accent: "from-success/20 to-success/0",
-    iconColor: "text-success",
+    accent: "from-seafoam/20 to-seafoam/0",
+    iconColor: "text-seafoam",
   },
   {
     icon: Terminal,
     title: "Remediation Playbooks",
     description:
       "Actionable upgrade paths, patch suggestions, and alternative package recommendations — not just CVE numbers.",
-    accent: "from-cyan-glow/20 to-violet-glow/0",
-    iconColor: "text-cyan-glow",
+    accent: "from-tide/20 to-phosphor/0",
+    iconColor: "text-tide",
   },
 ];
 
@@ -75,6 +76,7 @@ const tiers = [
       "Community support",
     ],
     cta: "Get started",
+    ctaLink: "/signup",
     highlight: false,
   },
   {
@@ -90,6 +92,7 @@ const tiers = [
       "Priority support",
     ],
     cta: "Start free trial",
+    ctaLink: "/signup",
     highlight: true,
   },
   {
@@ -105,6 +108,7 @@ const tiers = [
       "Quarterly threat briefings",
     ],
     cta: "Contact sales",
+    ctaLink: "/contact",
     highlight: false,
   },
 ];
@@ -116,83 +120,113 @@ const stats = [
   { value: "6,200+", label: "Teams protected" },
 ];
 
+/* ── Ripple Card Mouse Tracker ─────────────────────────── */
+
+function useRippleCards(containerRef: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const cards = container.querySelectorAll<HTMLElement>(".ripple-card");
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.setProperty("--mouse-x", `${x}%`);
+        card.style.setProperty("--mouse-y", `${y}%`);
+      });
+    };
+
+    container.addEventListener("mousemove", handleMouseMove);
+    return () => container.removeEventListener("mousemove", handleMouseMove);
+  }, [containerRef]);
+}
+
 /* ── Component ─────────────────────────────────────────── */
 
 export default function Landing() {
-  return (
-    <div className="bg-void text-text-primary">
-      {/* ── HERO ── */}
-      <section className="relative overflow-hidden pt-32 pb-24 sm:pt-44 sm:pb-32">
-        {/* Background effects */}
-        <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(0,212,255,.08),transparent_60%)]" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,rgba(124,92,252,.06),transparent_50%)]" />
+  const featuresRef = useRef<HTMLDivElement>(null);
+  useRippleCards(featuresRef);
 
-        {/* Radar rings */}
+  return (
+    <div className="bg-abyss text-text-primary">
+      {/* ━━━━━━━━━━ HERO ━━━━━━━━━━ */}
+      <section className="relative overflow-hidden pt-32 pb-24 sm:pt-44 sm:pb-32">
+        {/* Background grid + ocean gradients */}
+        <div className="pointer-events-none absolute inset-0 bg-grid opacity-40" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(0,229,200,0.12),transparent_60%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_80%_70%,rgba(167,139,250,0.07),transparent_50%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_600px_at_20%_40%,rgba(0,229,200,0.04),transparent_60%)]" />
+
+        {/* Ripple rings -- concentric circles expanding outward */}
         <div className="pointer-events-none absolute left-1/2 top-1/3 -translate-x-1/2 -translate-y-1/2">
-          <div className="animate-radar h-64 w-64 rounded-full border border-cyan-glow/20" />
-          <div className="animate-radar delay-1000 absolute inset-0 h-64 w-64 rounded-full border border-cyan-glow/15" />
-          <div className="animate-radar delay-200 absolute inset-0 h-64 w-64 rounded-full border border-violet-glow/10" />
+          <div className="animate-ripple h-[28rem] w-[28rem] rounded-full border border-tide/[0.12]" />
+          <div className="animate-ripple delay-400 absolute inset-0 h-[28rem] w-[28rem] rounded-full border border-tide/[0.09]" />
+          <div className="animate-ripple delay-800 absolute inset-0 h-[28rem] w-[28rem] rounded-full border border-phosphor/[0.06]" />
         </div>
 
-        {/* Floating orbs */}
-        <div className="pointer-events-none absolute left-[15%] top-[20%] h-48 w-48 animate-drift rounded-full bg-cyan-glow/[.03] blur-3xl" />
-        <div className="pointer-events-none absolute right-[10%] top-[30%] h-64 w-64 animate-drift delay-400 rounded-full bg-violet-glow/[.03] blur-3xl" />
+        {/* Floating bioluminescent orbs */}
+        <div className="pointer-events-none absolute left-[10%] top-[18%] h-56 w-56 animate-current rounded-full bg-tide/[0.03] blur-3xl" />
+        <div className="pointer-events-none absolute right-[8%] top-[25%] h-72 w-72 animate-current delay-300 rounded-full bg-phosphor/[0.04] blur-3xl" />
+        <div className="pointer-events-none absolute left-[55%] bottom-[10%] h-40 w-40 animate-current delay-700 rounded-full bg-tide/[0.025] blur-2xl" />
+        <div className="pointer-events-none absolute left-[30%] top-[60%] h-24 w-24 animate-current delay-1000 rounded-full bg-phosphor/[0.03] blur-xl" />
+        <div className="pointer-events-none absolute right-[25%] top-[15%] h-32 w-32 animate-current delay-500 rounded-full bg-tide/[0.02] blur-2xl" />
 
         <div className="relative mx-auto max-w-5xl px-4 text-center sm:px-6">
           {/* Badge */}
-          <div className="animate-float-up mb-6 inline-flex items-center gap-2.5 rounded-full border border-cyan-glow/15 bg-cyan-wash px-4 py-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-cyan-glow animate-glow-pulse" />
-            <span className="font-mono text-xs font-medium text-cyan-glow">
-              Now scanning Go modules &amp; Cargo crates
+          <div className="animate-tide-rise mb-6 inline-flex items-center gap-2.5 rounded-full border border-tide/15 bg-tide-wash px-4 py-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-tide animate-bioluminescence" />
+            <span className="font-mono text-xs font-medium text-tide">
+              Now scanning Cargo crates &amp; Go modules
             </span>
           </div>
 
           {/* Heading */}
-          <h1 className="animate-float-up delay-100 font-display text-5xl font-extrabold leading-[1.1] tracking-tight sm:text-7xl">
-            Know what's in your
+          <h1 className="animate-tide-rise delay-100 font-display text-5xl font-extrabold leading-[1.08] tracking-tight sm:text-7xl">
+            Know what lurks in your
             <br />
-            <span className="bg-gradient-to-r from-cyan-glow via-cyan-glow to-violet-glow bg-clip-text text-transparent text-glow-cyan">
+            <span className="bg-gradient-to-r from-tide via-tide to-phosphor bg-clip-text text-transparent text-glow-tide">
               software supply chain
             </span>
           </h1>
 
           {/* Subheading */}
-          <p className="animate-float-up delay-200 mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-text-secondary">
-            Vectrix uses AI to continuously analyze your dependency graph —
+          <p className="animate-tide-rise delay-200 mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-text-secondary">
+            Ripptide uses AI to continuously analyze your dependency graph —
             surfacing security risks, license conflicts, and maintenance red
             flags before they reach production.
           </p>
 
           {/* CTAs */}
-          <div className="animate-float-up delay-300 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="animate-tide-rise delay-300 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
               to="/signup"
-              className="group inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-glow to-violet-glow px-7 py-3.5 text-sm font-bold text-void transition-all hover:shadow-[0_0_32px_rgba(0,212,255,0.35)]"
+              className="group relative inline-flex items-center gap-2.5 overflow-hidden rounded-xl bg-gradient-to-r from-tide to-phosphor px-7 py-3.5 text-sm font-bold text-abyss transition-all hover:shadow-[0_0_40px_rgba(0,229,200,0.4),0_0_80px_rgba(167,139,250,0.15)]"
             >
-              Start free trial
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <span className="relative z-10 flex items-center gap-2.5">
+                Start free trial
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              </span>
             </Link>
-            <a
-              href="https://docs.vectrix.dev"
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/8 bg-white/[.03] px-7 py-3.5 text-sm font-medium text-text-secondary transition-all hover:border-cyan-glow/20 hover:text-text-primary"
+            <Link
+              to="/docs"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/8 bg-white/[0.03] px-7 py-3.5 text-sm font-medium text-text-secondary transition-all hover:border-tide/20 hover:text-text-primary hover:bg-white/[0.05]"
             >
               Read the docs
-            </a>
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── STATS ── */}
-      <section className="relative border-y border-white/[.04]">
+      {/* ━━━━━━━━━━ STATS BAR ━━━━━━━━━━ */}
+      <section className="relative border-y border-white/[0.04]">
         <div className="absolute inset-0 animate-shimmer" />
         <div className="relative mx-auto grid max-w-5xl grid-cols-2 gap-6 px-4 py-12 sm:grid-cols-4 sm:px-6">
           {stats.map((s, i) => (
             <div
               key={s.label}
-              className={`animate-float-up text-center delay-${(i + 1) * 100}`}
+              className={`animate-tide-rise text-center delay-${(i + 1) * 100}`}
             >
               <div className="font-display text-3xl font-extrabold text-text-primary sm:text-4xl">
                 {s.value}
@@ -203,13 +237,13 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── FEATURES ── */}
+      {/* ━━━━━━━━━━ FEATURES ━━━━━━━━━━ */}
       <section id="features" className="relative py-24 sm:py-32">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(124,92,252,.04),transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(167,139,250,0.04),transparent_70%)]" />
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div ref={featuresRef} className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="font-mono text-xs font-medium uppercase tracking-widest text-cyan-glow">
+            <span className="font-mono text-xs font-medium uppercase tracking-widest text-tide">
               Capabilities
             </span>
             <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-5xl">
@@ -217,7 +251,7 @@ export default function Landing() {
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-text-secondary">
               From the first dependency you install to the container you deploy,
-              Vectrix provides continuous visibility into your supply chain risk.
+              Ripptide provides continuous visibility into your supply chain risk.
             </p>
           </div>
 
@@ -225,14 +259,17 @@ export default function Landing() {
             {features.map((f, i) => (
               <div
                 key={f.title}
-                className={`group glass relative overflow-hidden rounded-2xl p-6 animate-float-up delay-${(i + 1) * 100}`}
+                className={`group glass ripple-card relative overflow-hidden rounded-2xl p-6 animate-tide-rise delay-${(i + 1) * 100}`}
               >
+                {/* Hover gradient overlay */}
                 <div
                   className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${f.accent} opacity-0 transition-opacity duration-500 group-hover:opacity-100`}
                 />
 
                 <div className="relative">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-xl border border-white/8 bg-white/[.03] ${f.iconColor}`}>
+                  <div
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl border border-white/8 bg-white/[0.03] ${f.iconColor}`}
+                  >
                     <f.icon className="h-5 w-5" />
                   </div>
                   <h3 className="mt-5 font-display text-lg font-semibold text-text-primary">
@@ -248,14 +285,16 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── TERMINAL PREVIEW ── */}
-      <section className="relative border-y border-white/[.04] py-24 sm:py-32">
+      {/* ━━━━━━━━━━ TERMINAL PREVIEW ━━━━━━━━━━ */}
+      <section className="relative border-y border-white/[0.04] py-24 sm:py-32">
         <div className="pointer-events-none absolute inset-0 bg-grid opacity-30" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_right,rgba(0,229,200,0.04),transparent_50%)]" />
 
         <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-2">
+            {/* Left -- description + bullet points */}
             <div>
-              <span className="font-mono text-xs font-medium uppercase tracking-widest text-cyan-glow">
+              <span className="font-mono text-xs font-medium uppercase tracking-widest text-tide">
                 Developer experience
               </span>
               <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-4xl">
@@ -272,8 +311,8 @@ export default function Landing() {
                   "Diff-aware scanning on pull requests",
                 ].map((item) => (
                   <div key={item} className="flex items-start gap-2.5">
-                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success/10">
-                      <Check className="h-3 w-3 text-success" />
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-seafoam/10">
+                      <Check className="h-3 w-3 text-seafoam" />
                     </div>
                     <span className="text-sm text-text-secondary">{item}</span>
                   </div>
@@ -281,41 +320,44 @@ export default function Landing() {
               </div>
             </div>
 
-            <div className="glass glow-cyan overflow-hidden rounded-2xl">
-              <div className="flex items-center gap-2 border-b border-white/[.04] px-5 py-3.5">
+            {/* Right -- terminal */}
+            <div className="glass glow-tide overflow-hidden rounded-2xl">
+              {/* Title bar */}
+              <div className="flex items-center gap-2 border-b border-white/[0.04] px-5 py-3.5">
                 <div className="flex gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-danger/60" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-warning/60" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-success/60" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-coral/60" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber/60" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-seafoam/60" />
                 </div>
                 <span className="ml-2 font-mono text-xs text-text-muted">
                   ~/acme/payments-service
                 </span>
               </div>
+              {/* Terminal content */}
               <pre className="overflow-x-auto px-5 py-5 font-mono text-[13px] leading-relaxed text-text-secondary">
                 <code>
                   <span className="text-text-muted">$</span>{" "}
-                  <span className="text-cyan-glow">npx vectrix scan</span>
+                  <span className="text-tide">npx ripptide scan</span>
                   {`
 
-  `}<span className="text-text-muted">Resolving dependency graph...</span>{" "}<span className="text-success">done</span>{` (1,247 packages)
-  `}<span className="text-text-muted">Running anomaly detection...</span>{" "}<span className="text-success">done</span>{`
+  `}<span className="text-text-muted">Resolving dependency graph...</span>{" "}<span className="text-seafoam">done</span>{` (1,247 packages)
+  `}<span className="text-text-muted">Running anomaly detection...</span>{" "}<span className="text-seafoam">done</span>{`
 
-  ┌─────────────────────────────────────────┐
-  │ `}<span className="text-danger font-semibold">3 critical</span>{"   "}<span className="text-warning font-semibold">12 warning</span>{"   "}<span className="text-success font-semibold">1,232 ok</span>{` │
-  └─────────────────────────────────────────┘
+  `}<span className="text-tide">{"┌─────────────────────────────────────────┐"}</span>{`
+  `}<span className="text-tide">{"│"}</span>{" "}<span className="text-coral font-semibold">3 critical</span>{"   "}<span className="text-amber font-semibold">12 warning</span>{"   "}<span className="text-seafoam font-semibold">1,232 ok</span>{" "}<span className="text-tide">{"│"}</span>{`
+  `}<span className="text-tide">{"└─────────────────────────────────────────┘"}</span>{`
 
-  `}<span className="font-semibold text-danger">CRITICAL</span>{`  colors@1.4.1
-    → Maintainer pushed malicious payload
-    → `}<span className="text-text-muted">Recommendation: pin to 1.4.0</span>{`
+  `}<span className="font-semibold text-coral">CRITICAL</span>{`  colors@1.4.1
+    `}<span className="text-text-secondary">{"→"} Maintainer pushed malicious payload</span>{`
+    `}<span className="text-text-muted">{"→"} Recommendation: pin to 1.4.0</span>{`
 
-  `}<span className="font-semibold text-danger">CRITICAL</span>{`  event-stream@3.3.6
-    → Obfuscated crypto-mining payload
-    → `}<span className="text-text-muted">Recommendation: upgrade to 4.0.1</span>{`
+  `}<span className="font-semibold text-coral">CRITICAL</span>{`  event-stream@3.3.6
+    `}<span className="text-text-secondary">{"→"} Obfuscated crypto-mining payload</span>{`
+    `}<span className="text-text-muted">{"→"} Recommendation: upgrade to 4.0.1</span>{`
 
-  `}<span className="font-semibold text-warning">WARNING</span>{`   lodash@4.17.19
-    → 2 unpatched prototype pollution CVEs
-    → `}<span className="text-text-muted">Recommendation: upgrade to 4.17.21</span>
+  `}<span className="font-semibold text-amber">WARNING</span>{`   lodash@4.17.19
+    `}<span className="text-text-secondary">{"→"} 2 unpatched prototype pollution CVEs</span>{`
+    `}<span className="text-text-muted">{"→"} Recommendation: upgrade to 4.17.21</span>
                 </code>
               </pre>
             </div>
@@ -323,13 +365,13 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── PRICING ── */}
+      {/* ━━━━━━━━━━ PRICING ━━━━━━━━━━ */}
       <section id="pricing" className="relative py-24 sm:py-32">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(0,212,255,.04),transparent_60%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(0,229,200,0.04),transparent_60%)]" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="font-mono text-xs font-medium uppercase tracking-widest text-cyan-glow">
+            <span className="font-mono text-xs font-medium uppercase tracking-widest text-tide">
               Pricing
             </span>
             <h2 className="mt-3 font-display text-3xl font-bold tracking-tight sm:text-5xl">
@@ -347,43 +389,51 @@ export default function Landing() {
                 key={tier.name}
                 className={`relative rounded-2xl p-7 transition-all duration-300 ${
                   tier.highlight
-                    ? "glass glow-cyan-strong animate-border-glow"
+                    ? "glass glow-tide-strong animate-border-pulse"
                     : "glass"
                 }`}
               >
                 {tier.highlight && (
-                  <span className="absolute -top-3 left-5 rounded-full bg-gradient-to-r from-cyan-glow to-violet-glow px-4 py-0.5 text-xs font-bold text-void">
+                  <span className="absolute -top-3 left-5 rounded-full bg-gradient-to-r from-tide to-phosphor px-4 py-0.5 text-xs font-bold text-abyss">
                     Most popular
                   </span>
                 )}
-                <h3 className="font-display text-lg font-semibold">{tier.name}</h3>
+                <h3 className="font-display text-lg font-semibold">
+                  {tier.name}
+                </h3>
                 <div className="mt-4 flex items-baseline gap-1">
                   {tier.price === "Custom" ? (
-                    <span className="font-display text-4xl font-extrabold">Custom</span>
+                    <span className="font-display text-4xl font-extrabold">
+                      Custom
+                    </span>
                   ) : (
                     <>
-                      <span className="font-display text-4xl font-extrabold">${tier.price}</span>
+                      <span className="font-display text-4xl font-extrabold">
+                        ${tier.price}
+                      </span>
                       <span className="text-sm text-text-muted">/mo</span>
                     </>
                   )}
                 </div>
-                <p className="mt-3 text-sm text-text-secondary">{tier.description}</p>
+                <p className="mt-3 text-sm text-text-secondary">
+                  {tier.description}
+                </p>
                 <ul className="mt-6 space-y-3">
                   {tier.features.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm">
-                      <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cyan-glow/10">
-                        <Check className="h-2.5 w-2.5 text-cyan-glow" />
+                      <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-tide/10">
+                        <Check className="h-2.5 w-2.5 text-tide" />
                       </div>
                       <span className="text-text-secondary">{f}</span>
                     </li>
                   ))}
                 </ul>
                 <Link
-                  to={tier.name === "Enterprise" ? "#" : "/signup"}
+                  to={tier.ctaLink}
                   className={`mt-7 block rounded-xl py-3 text-center text-sm font-semibold transition-all ${
                     tier.highlight
-                      ? "bg-gradient-to-r from-cyan-glow to-violet-glow text-void hover:shadow-[0_0_24px_rgba(0,212,255,0.3)]"
-                      : "border border-white/8 bg-white/[.03] text-text-secondary hover:border-cyan-glow/20 hover:text-text-primary"
+                      ? "bg-gradient-to-r from-tide to-phosphor text-abyss hover:shadow-[0_0_32px_rgba(0,229,200,0.35)]"
+                      : "border border-white/8 bg-white/[0.03] text-text-secondary hover:border-tide/20 hover:text-text-primary"
                   }`}
                 >
                   {tier.cta}
@@ -394,29 +444,34 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="relative border-t border-white/[.04] py-24 sm:py-28">
+      {/* ━━━━━━━━━━ CTA ━━━━━━━━━━ */}
+      <section className="relative border-t border-white/[0.04] py-24 sm:py-28">
         <div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,212,255,.06),transparent_50%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,229,200,0.06),transparent_50%)]" />
 
+        {/* Ripple animation in background */}
         <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-          <div className="animate-radar h-48 w-48 rounded-full border border-cyan-glow/10" />
+          <div className="animate-ripple h-56 w-56 rounded-full border border-tide/10" />
+          <div className="animate-ripple delay-500 absolute inset-0 h-56 w-56 rounded-full border border-tide/[0.06]" />
+          <div className="animate-ripple delay-1000 absolute inset-0 h-56 w-56 rounded-full border border-phosphor/[0.04]" />
         </div>
 
         <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-cyan-glow/20 bg-cyan-wash">
-            <div className="h-3 w-3 rounded-full bg-cyan-glow animate-glow-pulse" />
+          {/* Bioluminescent dot */}
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-tide/20 bg-tide-wash">
+            <div className="h-3 w-3 rounded-full bg-tide animate-bioluminescence" />
           </div>
+
           <h2 className="mt-6 font-display text-3xl font-bold tracking-tight sm:text-5xl">
             Stop shipping blind
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-text-secondary">
-            Join thousands of engineering teams using Vectrix to secure their
+            Join thousands of engineering teams using Ripptide to secure their
             software supply chain. Set up in under five minutes.
           </p>
           <Link
             to="/signup"
-            className="group mt-8 inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-cyan-glow to-violet-glow px-8 py-3.5 text-sm font-bold text-void transition-all hover:shadow-[0_0_32px_rgba(0,212,255,0.35)]"
+            className="group mt-8 inline-flex items-center gap-2.5 rounded-xl bg-gradient-to-r from-tide to-phosphor px-8 py-3.5 text-sm font-bold text-abyss transition-all hover:shadow-[0_0_40px_rgba(0,229,200,0.4),0_0_80px_rgba(167,139,250,0.15)]"
           >
             Start your free trial
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

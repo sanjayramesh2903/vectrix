@@ -13,8 +13,8 @@ const footerLinks = {
     { label: "Contact", href: "/contact" },
   ],
   Resources: [
-    { label: "Documentation", href: "https://docs.vectrix.dev", external: true },
-    { label: "API Reference", href: "https://docs.vectrix.dev/api", external: true },
+    { label: "Documentation", href: "/docs" },
+    { label: "API Reference", href: "/docs/api" },
     { label: "Security", href: "/about" },
   ],
   Legal: [
@@ -25,49 +25,41 @@ const footerLinks = {
 
 export default function Footer() {
   return (
-    <footer className="relative border-t border-white/[.04] bg-void">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-glow/20 to-transparent" />
+    <footer className="relative border-t border-white/[.04] bg-[#030b18]">
+      {/* Subtle tide glow line at top */}
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#00e5c8]/20 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
+          {/* Brand column */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-cyan-glow animate-glow-pulse" />
-              <span className="font-display text-base font-bold text-text-primary">
-                Vectrix
+              <div className="h-2 w-2 rounded-full bg-[#00e5c8] shadow-[0_0_8px_rgba(0,229,200,0.6)] animate-bioluminescence" />
+              <span className="font-display text-base font-bold text-white">
+                Ripptide
               </span>
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-text-muted">
+            <p className="mt-4 text-sm leading-relaxed text-white/35">
               AI-powered dependency intelligence for secure software supply
               chains.
             </p>
           </div>
 
+          {/* Link columns */}
           {Object.entries(footerLinks).map(([heading, links]) => (
             <div key={heading}>
-              <h4 className="font-display text-xs font-semibold uppercase tracking-widest text-text-secondary">
+              <h4 className="font-display text-xs font-semibold uppercase tracking-widest text-white/50">
                 {heading}
               </h4>
               <ul className="mt-4 space-y-2.5">
                 {links.map((link) => (
                   <li key={link.label}>
-                    {"external" in link && link.external ? (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="text-sm text-text-muted transition-colors duration-200 hover:text-cyan-glow"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link
-                        to={link.href}
-                        className="text-sm text-text-muted transition-colors duration-200 hover:text-cyan-glow"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
+                    <Link
+                      to={link.href}
+                      className="text-sm text-white/35 transition-colors duration-200 hover:text-[#00e5c8]"
+                    >
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -75,12 +67,14 @@ export default function Footer() {
           ))}
         </div>
 
+        {/* Bottom bar */}
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/[.04] pt-6 sm:flex-row">
-          <span className="text-xs text-text-muted">
-            &copy; {new Date().getFullYear()} Vectrix, Inc. All rights reserved.
+          <span className="text-xs text-white/35">
+            &copy; {new Date().getFullYear()} Ripptide, Inc. All rights
+            reserved.
           </span>
-          <div className="flex items-center gap-1 text-xs text-text-muted">
-            <span className="inline-block h-1.5 w-1.5 rounded-full bg-success" />
+          <div className="flex items-center gap-1.5 text-xs text-white/35">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#34d399] shadow-[0_0_6px_rgba(52,211,153,0.5)]" />
             All systems operational
           </div>
         </div>

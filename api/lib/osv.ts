@@ -51,6 +51,7 @@ const ECOSYSTEM_MAP: Record<string, string> = {
   npm: "npm",
   pypi: "PyPI",
   go: "Go",
+  "crates.io": "crates.io",
 };
 
 function classifySeverity(vuln: OsvVulnerability): "critical" | "warning" | "info" {

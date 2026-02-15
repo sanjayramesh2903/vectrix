@@ -1,10 +1,10 @@
 {
-  "name": "vectrix-cli",
+  "name": "ripptide-cli",
   "version": "0.1.0",
-  "description": "Vectrix CLI — scan your dependencies for supply chain risks",
+  "description": "Ripptide CLI — scan your dependencies for supply chain risks",
   "type": "module",
   "bin": {
-    "vectrix": "./dist/index.js"
+    "ripptide": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

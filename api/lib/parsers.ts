@@ -7,7 +7,7 @@ export interface ParsedDependency {
   name: string;
   version: string;
   isDirect: boolean;
-  ecosystem: "npm" | "pypi" | "go";
+  ecosystem: "npm" | "pypi" | "go" | "crates.io";
 }
 
 /**
@@ -158,6 +158,46 @@ export function parseGoSum(content: string): ParsedDependency[] {
 }
 
 /**
+ * Parse Cargo.lock (Rust/Cargo)
+ */
+export function parseCargoLock(content: string): ParsedDependency[] {
+  const deps: ParsedDependency[] = [];
+  const seen = new Set<string>();
+
+  // Cargo.lock uses TOML-like format with [[package]] sections
+  const packageBlocks = content.split("[[package]]").slice(1);
+
+  for (const block of packageBlocks) {
+    const nameMatch = block.match(/name\s*=\s*"([^"]+)"/);
+    const versionMatch = block.match(/version\s*=\s*"([^"]+)"/);
+
+    if (!nameMatch || !versionMatch) continue;
+
+    const name = nameMatch[1];
+    const version = versionMatch[1];
+    const key = `${name}@${version}`;
+
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    // Check if it has a source (external dependency) vs local path
+    const sourceMatch = block.match(/source\s*=\s*"([^"]+)"/);
+    const isExternal = !!sourceMatch;
+
+    if (isExternal) {
+      deps.push({
+        name,
+        version,
+        isDirect: false,
+        ecosystem: "crates.io",
+      });
+    }
+  }
+
+  return deps;
+}
+
+/**
  * Auto-detect file type and parse
  */
 export function parseLockfile(
@@ -168,5 +208,6 @@ export function parseLockfile(
   if (filename === "package.json") return parsePackageJson(content);
   if (filename === "requirements.txt") return parseRequirementsTxt(content);
   if (filename === "go.sum") return parseGoSum(content);
+  if (filename === "Cargo.lock") return parseCargoLock(content);
   throw new Error(`Unsupported lockfile format: ${filename}`);
 }

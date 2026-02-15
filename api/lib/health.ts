@@ -146,6 +146,77 @@ async function scoreNpmPackage(name: string, version: string): Promise<HealthRes
   return result;
 }
 
+async function scoreCratePackage(name: string, version: string): Promise<HealthResult> {
+  const result: HealthResult = {
+    packageName: name,
+    packageVersion: version,
+    ecosystem: "crates.io",
+    score: 50,
+    license: null,
+    signals: {
+      lastPublishDaysAgo: null,
+      weeklyDownloads: null,
+      maintainerCount: null,
+      hasRepository: false,
+      deprecated: false,
+    },
+  };
+
+  try {
+    const res = await fetch(`https://crates.io/api/v1/crates/${encodeURIComponent(name)}`, {
+      headers: { Accept: "application/json", "User-Agent": "Ripptide/1.0" },
+    });
+    if (!res.ok) return result;
+
+    const data = await res.json() as Record<string, unknown>;
+    const crateData = data.crate as Record<string, unknown> | undefined;
+    if (!crateData) return result;
+
+    result.signals.weeklyDownloads = (crateData.recent_downloads as number) ?? null;
+    result.signals.hasRepository = !!(crateData.repository as string);
+
+    const updatedAt = crateData.updated_at as string | undefined;
+    if (updatedAt) {
+      result.signals.lastPublishDaysAgo = Math.floor(
+        (Date.now() - new Date(updatedAt).getTime()) / (1000 * 60 * 60 * 24)
+      );
+    }
+
+    // Check specific version for license
+    const versions = data.versions as Array<Record<string, unknown>> | undefined;
+    if (versions) {
+      const versionData = versions.find(v => v.num === version);
+      if (versionData) {
+        result.license = (versionData.license as string) ?? null;
+        result.signals.deprecated = !!(versionData.yanked as boolean);
+      }
+    }
+
+    // Compute score
+    let score = 50;
+    if (result.signals.lastPublishDaysAgo !== null) {
+      if (result.signals.lastPublishDaysAgo < 180) score += 20;
+      else if (result.signals.lastPublishDaysAgo < 365) score += 10;
+      else if (result.signals.lastPublishDaysAgo > 730) score -= 20;
+      else score -= 10;
+    }
+    if (result.signals.weeklyDownloads !== null) {
+      if (result.signals.weeklyDownloads > 100_000) score += 15;
+      else if (result.signals.weeklyDownloads > 10_000) score += 10;
+      else if (result.signals.weeklyDownloads < 1_000) score -= 10;
+    }
+    if (result.signals.hasRepository) score += 5;
+    else score -= 10;
+    if (result.signals.deprecated) score -= 30;
+
+    result.score = Math.max(0, Math.min(100, score));
+  } catch {
+    // Return default neutral score
+  }
+
+  return result;
+}
+
 /**
  * Score health for a list of dependencies.
  * Processes in parallel with concurrency limit to avoid rate limits.
@@ -156,9 +227,9 @@ export async function scoreHealth(
   const results: HealthResult[] = [];
   const findings: HealthFinding[] = [];
 
-  // Only score npm for now — PyPI and Go support can be added later
   const npmDeps = deps.filter((d) => d.ecosystem === "npm");
-  const otherDeps = deps.filter((d) => d.ecosystem !== "npm");
+  const cratesDeps = deps.filter((d) => d.ecosystem === "crates.io");
+  const otherDeps = deps.filter((d) => d.ecosystem !== "npm" && d.ecosystem !== "crates.io");
 
   // Process in batches of 10 to respect rate limits
   const BATCH_SIZE = 10;
@@ -170,7 +241,16 @@ export async function scoreHealth(
     results.push(...batchResults);
   }
 
-  // Give non-npm deps a neutral score
+  // Score crates.io deps using the crates.io API
+  for (let i = 0; i < cratesDeps.length; i += BATCH_SIZE) {
+    const batch = cratesDeps.slice(i, i + BATCH_SIZE);
+    const batchResults = await Promise.all(
+      batch.map((dep) => scoreCratePackage(dep.name, dep.version))
+    );
+    results.push(...batchResults);
+  }
+
+  // Give non-scored deps a neutral score
   for (const dep of otherDeps) {
     results.push({
       packageName: dep.name,

@@ -1,17 +1,17 @@
-name: "Vectrix Dependency Scan"
+name: "Ripptide Dependency Scan"
 description: "Scan your dependencies for supply chain risks, vulnerabilities, and maintenance issues"
-author: "Vectrix"
+author: "Ripptide"
 
 branding:
   icon: "shield"
-  color: "purple"
+  color: "blue"
 
 inputs:
   token:
-    description: "Your Vectrix API token"
+    description: "Your Ripptide API token"
     required: true
   project-id:
-    description: "Vectrix project ID to associate the scan with"
+    description: "Ripptide project ID to associate the scan with"
     required: true
   file:
     description: "Path to lockfile (auto-detected if not set)"
@@ -23,7 +23,7 @@ inputs:
   api-url:
     description: "Custom API endpoint (for self-hosted instances)"
     required: false
-    default: "https://vectrix.vercel.app/api"
+    default: "https://ripptide.vercel.app/api"
 
 outputs:
   total-deps:
@@ -57,17 +57,20 @@ runs:
         elif [ -f "go.sum" ]; then
           echo "lockfile=go.sum" >> "$GITHUB_OUTPUT"
           echo "filename=go.sum" >> "$GITHUB_OUTPUT"
+        elif [ -f "Cargo.lock" ]; then
+          echo "lockfile=Cargo.lock" >> "$GITHUB_OUTPUT"
+          echo "filename=Cargo.lock" >> "$GITHUB_OUTPUT"
         else
-          echo "::error::No supported lockfile found. Supported: package-lock.json, package.json, requirements.txt, go.sum"
+          echo "::error::No supported lockfile found. Supported: package-lock.json, package.json, requirements.txt, go.sum, Cargo.lock"
           exit 1
         fi
 
-    - name: Run Vectrix scan
+    - name: Run Ripptide scan
       id: scan
       shell: bash
       env:
-        VECTRIX_TOKEN: ${{ inputs.token }}
-        VECTRIX_API: ${{ inputs.api-url }}
+        RIPPTIDE_TOKEN: ${{ inputs.token }}
+        RIPPTIDE_API: ${{ inputs.api-url }}
       run: |
         LOCKFILE="${{ steps.detect.outputs.lockfile }}"
         FILENAME="${{ steps.detect.outputs.filename }}"
@@ -76,9 +79,9 @@ runs:
 
         CONTENT=$(cat "$LOCKFILE")
 
-        RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$VECTRIX_API/scan" \
+        RESPONSE=$(curl -s -w "\n%{http_code}" -X POST "$RIPPTIDE_API/scan" \
           -H "Content-Type: application/json" \
-          -H "Authorization: Bearer $VECTRIX_TOKEN" \
+          -H "Authorization: Bearer $RIPPTIDE_TOKEN" \
           -d "$(jq -n \
             --arg pid "${{ inputs.project-id }}" \
             --arg fn "$FILENAME" \
@@ -116,7 +119,7 @@ runs:
         echo "::endgroup::"
 
         # Write job summary
-        echo "## Vectrix Scan Results" >> "$GITHUB_STEP_SUMMARY"
+        echo "## Ripptide Scan Results" >> "$GITHUB_STEP_SUMMARY"
         echo "" >> "$GITHUB_STEP_SUMMARY"
         echo "| Metric | Count |" >> "$GITHUB_STEP_SUMMARY"
         echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
